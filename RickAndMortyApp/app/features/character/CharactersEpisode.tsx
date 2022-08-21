@@ -1,18 +1,18 @@
 import React, { FC } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Character } from "../../constants/interfaces/character";
+import { Episode } from '../../constants/interfaces/episode';
 
 interface CharactersEpisodeype {
-    character: Character | null;
+    episodes: any;
 }
 
-const CharactersEpisode: FC<CharactersEpisodeype> = ({ character }) => (
+const CharactersEpisode: FC<CharactersEpisodeype> = ({ episodes }) => (
     <View style={styles.card}>
         <Text style={styles.title}>Episodes</Text>
         <View style={styles.episodes}>
-            {character?.episode.map((episode, index) => {
-                return <Text key={episode} style={styles.episode}>{episode} {(character.episode.length - 1) === index ? '' : ' - '}</Text>
-            })}
+            {episodes && episodes.map((episode: Episode, index: number) => (
+                <Text key={episode.id} style={styles.episode}>{episode.name} {(episodes.length - 1) === index ? '' : ' - '}</Text>
+            ))}
         </View>
     </View>
 );

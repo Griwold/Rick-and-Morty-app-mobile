@@ -1,18 +1,23 @@
 import React, { useEffect } from "react";
-import { Text, SafeAreaView, StyleSheet, Image, View, Touchable, TouchableOpacity, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView, ActivityIndicator } from "react-native";
 import { useAppSelector, useAppDispatch } from "../../utils/hooks/redux";
-import { windowHeight, windowWidth } from "../../constants/dimensions";
+
 import { clearCurrentCharacter } from "./characterSlice";
-import CharacterData from "./CharacterData";
-import { useNavigation } from "@react-navigation/native";
 import CharacterCard from "./CharacterCard";
 import CharactersEpisode from "./CharactersEpisode";
+import { fetchEpisodes } from "./episodeSlice";
+import { windowHeight } from '../../constants/dimensions';
 
 const CharacterDetail = () => {
 
     const character = useAppSelector(state => state.character.current_character);
+    const episodes = Object.values(useAppSelector(state => state.episode.entities));
+    const status = useAppSelector(state => state.episode.status);
     const dispatch = useAppDispatch();
-    const navigation = useNavigation();
+
+    useEffect(() => {
+        if (character) dispatch(fetchEpisodes(character));
+    }, [character]);
 
     useEffect(() => {
         // componentWillUnmount
@@ -25,7 +30,13 @@ const CharacterDetail = () => {
     return (
         <ScrollView style={styles.container}>
             <CharacterCard character={character} />
-            <CharactersEpisode character={character}/>
+            {status !== 'success' ?
+                <View style={styles.loading}>
+                    <ActivityIndicator size={'large'} color={'#60cd34'}/>
+                </View>
+                :
+                <CharactersEpisode episodes={Object.values(episodes)} />
+            }
         </ScrollView>
     )
 };
@@ -34,8 +45,13 @@ export default CharacterDetail;
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         backgroundColor: '#fbf1e8',
-        padding: 10
+        padding: 10,
+        flex: 1
+    },
+    loading: { 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        height: windowHeight - 200
     }
 });

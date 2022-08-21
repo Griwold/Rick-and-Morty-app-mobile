@@ -37,12 +37,7 @@ export interface Character {
     },
     location: {
         name: string,
-        url: string,
-        id?: number,
-        type?: string,
-        dimension?: string,
-        residents?: string[],
-        created?: string
+        url: string
     },
     image: string,
     episode: string[],
@@ -58,14 +53,4 @@ export interface Characters {
         prev: string | null
     },
     results: Character[]
-}
-
-export interface Episode {
-    id: number,
-    name: string,
-    air_date: string,
-    episode: string,
-    characters: string[],
-    url: string,
-    created: string
 }

@@ -4,7 +4,7 @@ import {
     createEntityAdapter,
 } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { Character, CharacterState, Characters, Episode } from '../../constants/interfaces/character';
+import { Character, CharacterState, Characters } from '../../constants/interfaces/character';
 import { RootState } from '../../store';
 
 const characterAdapter = createEntityAdapter<Character>({
@@ -31,7 +31,7 @@ const initialState: CharacterState = characterAdapter.getInitialState({
 export const fetchCharacters = createAsyncThunk<
     Characters,
     { name?: string }
->('signin/fetchCharacters', async ({ name }) => {
+>('character/fetchCharacters', async ({ name }) => {
 
     let url: string = "https://rickandmortyapi.com/api/character/";
 
@@ -48,7 +48,7 @@ export const fetchCharactersPagining = createAsyncThunk<
     Characters | null,
     void,
     { state: RootState }
->('signin/fetchCharactersPagining', async (args, { getState }) => {
+>('character/fetchCharactersPagining', async (args, { getState }) => {
 
     const filterName = getState().character.filters.name;
     const info = getState().character.info;
@@ -69,22 +69,9 @@ export const fetchCharactersPagining = createAsyncThunk<
 export const saveCurrentCharacter = createAsyncThunk<
     Character,
     Character
->('signin/saveCurrentCharacter', async (character) => {
-
-    let url_episodes = 'https://rickandmortyapi.com/api/episode/';
-
-    const episodes = character.episode.map(episode => episode.split('/').pop())
-
-    if (!!episodes.length) url_episodes += `${episodes}`;
-
-    const response_episodes = await axios(url_episodes);
+>('character/saveCurrentCharacter', async (character) => {
 
     let new_character: Character = { ...character };
-
-    if (response_episodes.data) {
-        if (Array.isArray(response_episodes.data)) new_character.episode = response_episodes.data.map((episode: Episode) => episode.name);
-        else new_character.episode = [response_episodes.data.name];
-    }
 
     if (character.location.url) {
         let ulr_location = character.location.url;
@@ -92,18 +79,6 @@ export const saveCurrentCharacter = createAsyncThunk<
         const response_location = await axios(ulr_location);
         if (response_location.data) {
             new_character.location = response_location.data;
-        }
-
-        let url_residents = 'https://rickandmortyapi.com/api/character/';
-
-        let residents = new_character.location.residents?.map(resident => resident.split('/').pop());
-
-        if (!!residents?.length) url_residents += `${residents}`;
-
-        const response_residents = await axios(url_residents);
-
-        if (response_residents.data) {
-            new_character.location.residents = response_residents.data.map((resident: Character) => resident.image);;
         }
     }
 
@@ -113,14 +88,14 @@ export const saveCurrentCharacter = createAsyncThunk<
 export const clearCurrentCharacter = createAsyncThunk<
     null,
     void
->('signin/clearCurrentCharacter', async () => {
+>('character/clearCurrentCharacter', async () => {
     return null;
 })
 
 export const setFilter = createAsyncThunk<
     string,
     string
->('signin/setFilter', async (name) => {
+>('character/setFilter', async (name) => {
     return name;
 })
 

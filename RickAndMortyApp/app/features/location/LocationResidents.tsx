@@ -4,14 +4,14 @@ import { Text, View, StyleSheet, Image } from 'react-native';
 import { Character } from '../../constants/interfaces/character';
 
 interface LocationResidentsType {
-    character: Character | null;
+    residents: string[];
 }
 
-const LocationResidents: FC<LocationResidentsType> = ({ character }) => (
+const LocationResidents: FC<LocationResidentsType> = ({ residents }) => (
     <View style={styles.card}>
         <Text style={styles.title}>Residents</Text>
         <View style={styles.images}>
-            {character?.location.residents?.map(resident => (
+            {residents.map((resident: string) => (
                 <Image key={resident} source={{ uri: resident }} style={styles.image} />
             ))}
         </View>

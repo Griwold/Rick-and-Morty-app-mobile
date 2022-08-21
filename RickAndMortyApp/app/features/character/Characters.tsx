@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../utils/hooks/redux";
 import { Character } from '../../constants/interfaces/character';
 import { useNavigation } from "@react-navigation/native";
 import SearchBar from "../../components/SearchBar";
+import { fetchEpisodes } from "./episodeSlice";
 
 const Characters = () => {
     const dispatch = useAppDispatch();
@@ -23,7 +24,10 @@ const Characters = () => {
     }, [status_save_character])
 
     const currentCharacter = (item: Character | undefined) => {
-        if (item) dispatch(saveCurrentCharacter(item));
+        if (item) {
+            dispatch(saveCurrentCharacter(item));
+            dispatch(fetchEpisodes(item));
+        }
     };
 
     const filterCharacter = (name: string) => {

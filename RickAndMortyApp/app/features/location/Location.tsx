@@ -1,21 +1,36 @@
-import React from 'react';
-import { StyleSheet, ScrollView } from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, ScrollView, View, ActivityIndicator } from 'react-native';
 
-import { useAppSelector } from '../../utils/hooks/redux';
+import { useAppDispatch, useAppSelector } from '../../utils/hooks/redux';
 import LocationData from './LocationData';
 import LocationNotFound from './LocationNotFound';
 import LocationResidents from './LocationResidents';
+import { fetchResidents } from './locationSlice';
+import { windowHeight } from '../../constants/dimensions';
 
 const Location = () => {
 
     const character = useAppSelector(state => state.character.current_character);
+    const status = useAppSelector(state => state.location.status);
+    const residents = useAppSelector(state => state.location.residents);
+    const dispatch = useAppDispatch();
 
-    if ( character?.location.name === 'unknown' ) return <LocationNotFound character={character}/>
+    useEffect(() => {
+        if (character) dispatch(fetchResidents(character));
+    }, [character])
+
+    if (character?.location.name === 'unknown') return <LocationNotFound character={character} />
 
     return (
         <ScrollView style={styles.container}>
             <LocationData character={character} />
-            <LocationResidents character={character} />
+            {status !== 'success' ?
+                <View style={styles.loading}>
+                    <ActivityIndicator size={'large'} color={'#60cd34'} />
+                </View>
+                :
+                <LocationResidents residents={residents} />
+            }
         </ScrollView>
     )
 };
@@ -28,13 +43,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#fbf1e8',
         padding: 10
     },
-    card: {
-        flexDirection: 'row',
-        elevation: 4,
-        backgroundColor: 'white',
-        borderRadius: 6,
-        padding: 10,
-        justifyContent: 'space-around',
-        minHeight: 200
+    loading: { 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        height: windowHeight - 300
     }
 });

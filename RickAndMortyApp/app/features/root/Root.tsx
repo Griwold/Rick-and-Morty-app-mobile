@@ -25,7 +25,7 @@ const Root = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Stack.Navigator initialRouteName="Signin">
+            <Stack.Navigator initialRouteName="Signin" screenOptions={{ animation: 'slide_from_right' }}>
                 {status === 'success' ?
                     <>
                         <Stack.Screen
